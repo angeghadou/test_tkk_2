@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement — TOKKA</title>
+  <meta name="theme-color" content="#111111">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokka.css">
+</head>
+<body class="body-gray">
+
+  <header class="page-head">
+    <a class="back" href="reseaux.html">&larr; Retour</a>
+    <div class="logo">TOKKA</div>
+    <div style="min-width:5rem"></div>
+  </header>
+
+  <!-- Étapes -->
+  <ol class="flow-progress" aria-label="Progression">
+    <li class="fp-step done"><span class="fp-dot">✓</span><span class="fp-label">Commande</span></li>
+    <li class="fp-line done"></li>
+    <li class="fp-step done"><span class="fp-dot">✓</span><span class="fp-label">Réseaux</span></li>
+    <li class="fp-line done"></li>
+    <li class="fp-step active"><span class="fp-dot">3</span><span class="fp-label">Paiement</span></li>
+  </ol>
+
+  <main class="flow-main">
+    <h1 class="flow-title">Paiement</h1>
+    <p class="flow-sub">Réglez l'acompte pour réserver votre carte. Le reste se paie à la livraison.</p>
+
+    <!-- Récapitulatif -->
+    <section class="panel">
+      <h2>Récapitulatif</h2>
+      <div class="recap-list" style="margin-top:.75rem">
+        <div class="order-line"><span class="muted">Cartes TOKKA × <span id="r-qty"></span></span><strong id="r-cards"></strong></div>
+        <div class="order-line hidden" id="r-qr-line"><span class="muted">QR code au dos</span><strong id="r-qr"></strong></div>
+        <div class="order-line"><span class="muted">Réseaux sur la carte</span><strong id="r-links"></strong></div>
+        <div class="order-line"><span class="muted">Livraison</span><strong id="r-delivery"></strong></div>
+        <div class="order-line"><span class="muted">Total de la commande</span><strong id="r-total"></strong></div>
+      </div>
+      <div class="live-total">
+        <small>Acompte à payer aujourd'hui</small>
+        <b id="r-deposit"></b>
+        <p>Reste à payer à la livraison : <strong id="r-remaining"></strong></p>
+      </div>
+    </section>
+
+    <!-- Moyen de paiement -->
+    <section class="panel">
+      <h2>Moyen de paiement</h2>
+      <p class="panel-hint">Paiement via Genius Pay.</p>
+      <div class="methods" id="methods">
+        <button type="button" class="method active" data-method="Orange Money"><i style="background:#ff7900"></i>Orange Money</button>
+        <button type="button" class="method" data-method="MTN MoMo"><i style="background:#ffcc00"></i>MTN MoMo</button>
+        <button type="button" class="method" data-method="Moov Money"><i style="background:#0072ce"></i>Moov Money</button>
+        <button type="button" class="method" data-method="Wave"><i style="background:#1dc8ff"></i>Wave</button>
+      </div>
+      <div class="field">
+        <label for="pay-phone">Numéro Mobile Money</label>
+        <input id="pay-phone" class="input" type="tel" inputmode="tel" placeholder="01 02 03 04 05">
+        <p class="field-error" id="pay-error"></p>
+      </div>
+      <p class="secure">🔒 Paiement sécurisé par Genius Pay</p>
+    </section>
+  </main>
+
+  <div class="sticky-bar">
+    <div class="sticky-in">
+      <div class="sticky-total"><small>À payer</small><b id="bar-amount"></b></div>
+      <button type="button" class="btn btn-dark btn-square" id="btn-pay">Payer maintenant</button>
+    </div>
+  </div>
+
+  <!-- Écran de traitement du paiement -->
+  <div class="pay-overlay hidden" id="pay-overlay" role="status" aria-live="polite">
+    <div class="pay-box" id="pay-box"></div>
+  </div>
+
+
+  <script>
+    /* =========================================================
+       CONFIGURATION
+       ========================================================= */
+    const CONFIG = {
+      // Laisse vide = paiement fictif (démo). Renseigne ton lien Genius Pay pour le paiement réel.
+      // ⚠ Ne mets jamais de clé secrète dans ce fichier : tout le monde peut le lire.
+      GENIUS_PAY_URL: '',
+      RETURN_URL: location.origin + location.pathname.replace('paiement.html', 'ma-carte.html') + '?new=1'
+    };
+
+    /* =========================================================
+       UTILITAIRES
+       ========================================================= */
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g, ' ');
+    const money = n => `${fmt(n)} FCFA`;
+    const store = {
+      get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    };
+    const KEY = 'tokka_order';
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    function toast(msg) {
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function normalizePhoneCI(raw) {
+      const d = String(raw).replace(/[^\d+]/g, '').replace(/^\+?225/, '').replace(/^00225/, '').replace(/\D/g, '');
+      return /^\d{10}$/.test(d) ? d : null;
+    }
+    const newRef = () => 'TK-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).slice(2, 5).toUpperCase();
+
+    /* =========================================================
+       GARDES : il faut une commande et l'étape réseaux terminée
+       ========================================================= */
+    const order = store.get(KEY) || {};
+    if (!order.firstName) location.replace('commande.html');
+    else if (!order.linksDone) location.replace('reseaux.html');
+    else if (order.status === 'paid') location.replace('ma-carte.html');
+
+    /* =========================================================
+       RÉCAPITULATIF
+       ========================================================= */
+    $('#r-qty').textContent = order.qty || 1;
+    $('#r-cards').textContent = money(order.cards || 0);
+    $('#r-qr-line').classList.toggle('hidden', !order.qr);
+    $('#r-qr').textContent = money(order.qrAmount || 0);
+    const n = (order.links || []).length;
+    $('#r-links').textContent = n ? `${n} réseau${n > 1 ? 'x' : ''}` : 'Aucun';
+    $('#r-delivery').textContent = `${order.commune || ''}`;
+    $('#r-total').textContent = money(order.total || 0);
+    $('#r-deposit').textContent = money(order.deposit || 0);
+    $('#r-remaining').textContent = money(order.remaining || 0);
+    $('#bar-amount').textContent = money(order.deposit || 0);
+    $('#pay-phone').value = order.phone || '';
+
+    let method = 'Orange Money';
+    $('#methods').addEventListener('click', e => {
+      const b = e.target.closest('.method'); if (!b) return;
+      $$('.method').forEach(m => m.classList.remove('active'));
+      b.classList.add('active');
+      method = b.dataset.method;
+    });
+    $('#pay-phone').addEventListener('input', () => {
+      $('#pay-phone').classList.remove('error'); $('#pay-error').textContent = '';
+    });
+
+    /* =========================================================
+       PAIEMENT
+       ========================================================= */
+    function showBox(html) { $('#pay-box').innerHTML = html; }
+
+    async function pay() {
+      const phoneInput = $('#pay-phone');
+      if (!normalizePhoneCI(phoneInput.value)) {
+        phoneInput.classList.add('error');
+        $('#pay-error').textContent = 'Numéro invalide (10 chiffres attendus).';
+        phoneInput.focus();
+        return;
+      }
+      const ref = newRef();
+
+      // --- Paiement réel : redirection vers Genius Pay ---
+      if (CONFIG.GENIUS_PAY_URL) {
+        store.set(KEY, { ...order, ref, method });
+        const url = new URL(CONFIG.GENIUS_PAY_URL);
+        // Adapte ces noms de paramètres à la documentation Genius Pay :
+        url.searchParams.set('amount', order.deposit);
+        url.searchParams.set('reference', ref);
+        url.searchParams.set('return_url', CONFIG.RETURN_URL + '&ref=' + encodeURIComponent(ref));
+        location.href = url.toString();
+        return;
+      }
+
+      // --- Paiement fictif ---
+      $('#pay-overlay').classList.remove('hidden');
+      showBox(`<div class="spinner"></div><p>Paiement en cours…</p><small>Validez la demande ${method} sur votre téléphone.</small>`);
+      await wait(2600);
+      store.set(KEY, { ...order, ref, method, status: 'paid', paidAt: new Date().toISOString() });
+      showBox(`<div class="state-icon ok">✓</div><p>Paiement confirmé</p><small>Ouverture de votre espace…</small>`);
+      await wait(1400);
+      location.href = 'ma-carte.html?new=1';
+    }
+    $('#btn-pay').addEventListener('click', pay);
+  </script>
+</body>
+</html>

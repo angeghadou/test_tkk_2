@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TOKKA — Carte de visite digitale NFC</title>
+  <meta name="description" content="TOKKA : la carte de visite digitale NFC. Un tap et tout ton contact s'affiche. Précommande ouverte à Abidjan.">
+  <meta name="theme-color" content="#111111">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokka.css">
+</head>
+<body>
+
+  <!-- ============================================================ -->
+  <!-- NAVBAR + MENU HAMBURGER                                      -->
+  <!-- ============================================================ -->
+  <header class="navbar" id="navbar">
+    <div class="container">
+      <a href="#top" class="logo">TOKKA</a>
+
+      <nav class="nav-links" aria-label="Navigation principale">
+        <a href="#section-produit">Le produit</a>
+        <a href="#section-comment">Comment ça marche</a>
+        <a href="#section-essai">Essayer</a>
+        <a href="#section-faq">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a href="commande.html" class="btn btn-dark btn-sm nav-cta">Précommander &rarr;</a>
+        <button class="burger" id="burger" type="button" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="mobile-menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+
+    <nav class="mobile-menu" id="mobile-menu" aria-label="Menu mobile">
+      <a href="#section-produit">Le produit</a>
+      <a href="#section-comment">Comment ça marche</a>
+      <a href="#section-essai">Essayer le tap</a>
+      <a href="#section-faq">FAQ</a>
+      <a href="commande.html" class="btn btn-dark btn-block">Précommander &rarr;</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section id="top" class="hero">
+      <div class="container hero-grid">
+        <div>
+          <p class="eyebrow">La carte qui vous suit partout</p>
+          <h1>Ne donne <br> plus ta <br> carte, <br> <span>TAP-la.</span></h1>
+          <p class="lead">Ta carte de visite digitale. Un tap, et tout ton contact s'affiche.</p>
+          <div class="hero-actions">
+            <a href="commande.html" class="btn btn-dark">Précommander maintenant &rarr;</a>
+            <a href="#section-essai" class="btn btn-outline">▶ Essayer le tap</a>
+          </div>
+          <ul class="badges">
+            <li>✓ Sans application</li>
+            <li>✓ Livraison offerte à Abidjan</li>
+            <li>✓ iPhone &amp; Android</li>
+          </ul>
+        </div>
+        <div class="hero-visual">
+          <!-- Renomme ton image en hero.png (évite espaces et accents dans le nom) -->
+          <img src="hero.png" alt="Main tenant la carte TOKKA" id="hero-img">
+        </div>
+      </div>
+    </section>
+
+    <!-- Produit -->
+    <section id="section-produit" class="section section-dark">
+      <div class="container reveal">
+        <p class="eyebrow">01 / LE PRODUIT</p>
+        <div class="two-col">
+          <h2 class="h2">Ta carte de visite <br><span class="gray">DIGITALE avec</span> <br>TOKKA.</h2>
+          <div>
+            <p class="lead-sm">Un objet physique, une expérience digitale. Conçue pour créer une connexion qui ne s'oublie pas.</p>
+            <div class="stats">
+              <div><h3>1 tap</h3><p>pour partager</p></div>
+              <div><h3>0</h3><p>application requise</p></div>
+              <div><h3>∞</h3><p>modifications</p></div>
+            </div>
+            <p class="gray" style="font-size:.875rem">Chaque rencontre devient une opportunité. Sans impression, sans gaspillage, sans friction.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Comment ça marche -->
+    <section id="section-comment" class="section">
+      <div class="container reveal">
+        <p class="eyebrow">02 / L'EXPÉRIENCE</p>
+        <h2 class="h2" style="font-weight:700">COMMENT ÇA <br><span class="gray light">MARCHE ?</span></h2>
+        <div class="steps">
+          <div>
+            <p class="step-num">01</p>
+            <h3>Renseignez vos informations</h3>
+            <p>Créez votre page TOKKA et ajoutez vos coordonnées, réseaux sociaux, site web et toutes les informations que vous souhaitez partager.</p>
+          </div>
+          <div>
+            <p class="step-num">02</p>
+            <h3>Approchez votre carte du téléphone</h3>
+            <p>Présentez votre carte TOKKA à l'arrière d'un smartphone compatible NFC. Aucune application n'est nécessaire.</p>
+          </div>
+          <div>
+            <p class="step-num">03</p>
+            <h3>Votre page s'ouvre instantanément</h3>
+            <p>Votre profil TOKKA s'affiche sur le téléphone. Votre contact peut alors consulter vos informations et les enregistrer en quelques secondes.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simulation téléphone -->
+    <section id="section-essai" class="section section-dark">
+      <div class="container two-col center-y reveal">
+        <div>
+          <p class="eyebrow">03 / ESSAYEZ</p>
+          <h2 class="h2">Un tap. <br><span class="gray">C'est tout.</span></h2>
+          <p class="lead-sm" style="margin-top:1.5rem">Approchez la carte du téléphone et regardez ce qui se passe.</p>
+          <p class="phone-status" id="tap-text">Appuyez pour approcher la carte du téléphone.</p>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:1.25rem">
+            <button type="button" class="btn btn-light" id="btn-tap">▶ Simuler un tap</button>
+            <a href="demo.html" class="text-link">Voir directement l'exemple &rarr;</a>
+          </div>
+        </div>
+
+        <div class="phone-panel">
+          <div class="phone-sim" id="phone-sim">
+            <div class="tap-phone">
+              <div class="tap-screen" id="tap-screen">
+                <div class="mini-avatar hidden" id="tap-avatar">YA</div>
+                <span id="tap-screen-text">Prêt à lire une carte NFC</span>
+              </div>
+            </div>
+            <div class="tap-wave"></div>
+            <div class="tap-wave"></div>
+            <div class="tap-card">TOKKA</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simulateur de commande
+    <section id="section-simulateur" class="section section-gray">
+      <div class="container reveal">
+        <div class="center">
+          <p class="eyebrow">04 / SIMULATEUR</p>
+          <h2 class="h2">Simulez votre <span class="gray light">commande.</span></h2>
+        </div>
+
+        <div class="sim-card">
+          <div class="sim-row">
+            <span>Quantité de cartes</span>
+            <div class="stepper">
+              <button type="button" data-qty="-1" aria-label="Diminuer">−</button>
+              <span data-qty-value>1</span>
+              <button type="button" data-qty="1" aria-label="Augmenter">+</button>
+            </div>
+          </div>
+          <div class="sim-row">
+            <label><input type="checkbox" class="check" id="sim-qr"> QR code au dos (+<span data-fmt="QR_PRICE"></span> / carte)</label>
+          </div>
+          <div class="sim-row"><span>Prix des cartes</span><strong data-sim="cards"></strong></div>
+          <div class="sim-row"><span>Option QR code</span><strong data-sim="qr"></strong></div>
+          <div class="sim-row"><span>Livraison (Abidjan)</span><strong style="color:var(--green)">Offerte</strong></div>
+          <div class="sim-row"><span>Total de la commande</span><strong data-sim="total"></strong></div>
+          <div class="sim-total"><small>Acompte à payer aujourd'hui</small><b data-sim="deposit"></b></div>
+          <div class="sim-row"><span>Reste à payer à la livraison</span><strong data-sim="remaining"></strong></div>
+          <button type="button" class="btn btn-dark btn-block" id="btn-sim-order" style="margin-top:1.25rem">Commander cette sélection &rarr;</button>
+        </div>
+      </div>
+    </section>
+     -->
+
+    <!-- Précommande -->
+    <section id="section-precommande" class="section section-dark">
+      <div class="container two-col center-y reveal">
+        <div>
+          <p class="eyebrow">04 / LE LANCEMENT</p>
+          <h2 class="h2" style="margin-bottom:2rem">Les précommandes <br><span class="gray light">sont ouvertes.</span></h2>
+          <p class="lead-sm" style="margin-bottom:1.5rem">Sois le premier à avoir la carte TOKKA.</p>
+          <p class="gray" style="font-size:.875rem;max-width:28rem">Versez <span data-fmt="DEPOSIT"></span> d'acompte aujourd'hui pour réserver votre carte. Le reste sera payé à la livraison chez vous. Livraison offerte sur Abidjan.</p>
+        </div>
+        <div class="offer">
+          <div class="offer-head">
+            <span class="pill">Prix de lancement</span>
+            <span class="offer-ref">TOKKA / 001</span>
+          </div>
+          <div class="block line">
+            <p class="offer-label">Prix total de la carte</p>
+            <div class="offer-price"><b data-fmt="PRICE" data-nounit></b><span>FCFA</span></div>
+          </div>
+          <div class="block">
+            <p class="offer-label">Acompte de réservation</p>
+            <span class="offer-deposit" data-fmt="DEPOSIT"></span>
+          </div>
+          <a href="commande.html" class="btn btn-dark btn-square btn-block">
+            <span>Précommander avec <span data-fmt="DEPOSIT"></span></span><span>&rarr;</span>
+          </a>
+          <p class="fineprint">* La livraison est entièrement offerte à Abidjan.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section id="section-faq" class="section section-gray">
+      <div class="container">
+        <div class="faq">
+          <div class="faq-head">
+            <p class="eyebrow">06 / FAQ</p>
+            <h2 class="h2">Des questions ? <br><span class="gray light">On vous répond.</span></h2>
+          </div>
+          <div class="faq-list" id="faq-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <h4>Contact</h4>
+          <a href="mailto:contact@tokka.site" style="font-size:1.1rem">contact@tokka.site</a>
+        </div>
+        <div class="gray" style="font-size:.875rem"><a href="#">Mentions légales</a> · <a href="#">CGV</a></div>
+      </div>
+      <p class="footer-big" aria-hidden="true">TOKKA</p>
+    </div>
+  </footer>
+
+  <script>
+    /* =========================================================
+       CONFIGURATION (garde les mêmes valeurs dans commande.html)
+       ========================================================= */
+    const CONFIG = {
+      PRICE: 5500,     // prix de la carte (FCFA)
+      DEPOSIT: 2500,    // acompte par carte
+      QR_PRICE: 1000    // option QR code (par carte)
+    };
+
+    const FAQ_ITEMS = [
+      ["Qu'est-ce que la carte TOKKA ?", "TOKKA est une carte de visite digitale avec puce NFC intégrée. Elle partage votre profil professionnel instantanément, sans application."],
+      ["Comment fonctionne la précommande ?", "Vous réservez votre carte aujourd'hui en réglant uniquement un acompte. Le reste du montant sera à régler lors de la livraison."],
+      ["Quels moyens de paiement ?", "L'acompte se règle en ligne via Genius Pay (Mobile Money et autres moyens disponibles). Le solde se paie à la livraison."],
+      ["La livraison est-elle gratuite ?", "Oui, la livraison est entièrement offerte à Abidjan pour toutes les précommandes réalisées durant la phase de lancement."],
+      ["Mon téléphone est-il compatible ?", "Tous les iPhone récents et la grande majorité des smartphones Android ont le NFC. Le QR code au dos sert d'alternative."],
+      ["Puis-je modifier ma carte après l'achat ?", "Oui. Depuis votre espace, vous pouvez changer vos informations, votre photo et vos réseaux à tout moment."],
+      ["Quand vais-je recevoir ma carte ?", "Les expéditions débuteront peu après la fin de la période de précommande. Vous serez tenu informé par e-mail ou WhatsApp."]
+    ];
+
+    /* =========================================================
+       UTILITAIRES
+       ========================================================= */
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g, ' ');
+    const money = n => `${fmt(n)} FCFA`;
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const store = {
+      get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    };
+
+    /* =========================================================
+       MENU HAMBURGER
+       ========================================================= */
+    const navbar = $('#navbar'), burger = $('#burger');
+    function setMenu(open) {
+      navbar.classList.toggle('menu-open', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Fermer le menu' : 'Ouvrir le menu');
+    }
+    burger.addEventListener('click', () => setMenu(!navbar.classList.contains('menu-open')));
+    $$('#mobile-menu a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') setMenu(false); });
+    document.addEventListener('click', e => { if (!navbar.contains(e.target)) setMenu(false); });
+    window.addEventListener('resize', () => { if (window.innerWidth >= 768) setMenu(false); });
+
+    /* =========================================================
+       PRIX, FAQ, ANIMATIONS
+       ========================================================= */
+    $$('[data-fmt]').forEach(el => {
+      const v = CONFIG[el.dataset.fmt];
+      el.textContent = el.hasAttribute('data-nounit') ? fmt(v) : money(v);
+    });
+
+    $('#faq-list').innerHTML = FAQ_ITEMS.map(([q, a], i) => `
+      <div class="faq-item">
+        <button class="faq-btn" aria-expanded="false" aria-controls="faq-${i}">
+          <span>${esc(q)}</span><span class="faq-icon" aria-hidden="true">+</span>
+        </button>
+        <div class="faq-content" id="faq-${i}" role="region"><p>${esc(a)}</p></div>
+      </div>`).join('');
+    $$('.faq-btn').forEach(btn => btn.addEventListener('click', () => {
+      const content = btn.nextElementSibling, open = btn.getAttribute('aria-expanded') === 'true';
+      $$('.faq-btn').forEach(b => {
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.style.maxHeight = null;
+        $('.faq-icon', b).textContent = '+';
+        $('.faq-icon', b).style.transform = '';
+      });
+      if (!open) {
+        btn.setAttribute('aria-expanded', 'true');
+        content.style.maxHeight = content.scrollHeight + 'px';
+        $('.faq-icon', btn).textContent = '−';
+        $('.faq-icon', btn).style.transform = 'rotate(180deg)';
+      }
+    }));
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver(es => es.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+      }), { threshold: .12 });
+      $$('.reveal').forEach(el => io.observe(el));
+    } else {
+      $$('.reveal').forEach(el => el.classList.add('visible'));
+    }
+
+    $('#hero-img').addEventListener('error', e => {
+      const d = document.createElement('div');
+      d.className = 'card-fallback';
+      d.textContent = 'TOKKA';
+      e.target.replaceWith(d);
+    });
+
+    /* =========================================================
+       SIMULATEUR DE COMMANDE (quantité => total en direct)
+       ========================================================= 
+    const sim = { qty: 1, qr: false };
+    function totals() {
+      const cards = CONFIG.PRICE * sim.qty;
+      const qr = sim.qr ? CONFIG.QR_PRICE * sim.qty : 0;
+      const total = cards + qr;
+      const deposit = CONFIG.DEPOSIT * sim.qty + qr;     // l'option QR est réglée avec l'acompte
+      return { cards, qr, total, deposit, remaining: Math.max(total - deposit, 0) };
+    }
+    function updateSim() {
+      const t = totals();
+      $$('[data-qty-value]').forEach(e => e.textContent = sim.qty);
+      $$('[data-sim]').forEach(e => {
+        const txt = money(t[e.dataset.sim]);
+        if (e.textContent !== txt) {
+          e.textContent = txt;
+          e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump');
+        }
+      });
+    }
+    $$('[data-qty]').forEach(b => b.addEventListener('click', () => {
+      sim.qty = Math.min(20, Math.max(1, sim.qty + +b.dataset.qty));
+      updateSim();
+    }));
+    $('#sim-qr').addEventListener('change', e => { sim.qr = e.target.checked; updateSim(); });
+    $('#btn-sim-order').addEventListener('click', () => {
+      store.set('tokka_order', { ...(store.get('tokka_order') || {}), qty: sim.qty, qr: sim.qr });
+      location.href = 'commande.html';
+    });
+    updateSim();
+
+    */ 
+   /* =========================================================
+       SIMULATION DU TAP (téléphone) -> ouvre la page de démo
+       ========================================================= */
+    let timers = [];
+    function runTap() {
+      const box = $('#phone-sim'), screen = $('#tap-screen');
+      timers.forEach(clearTimeout); timers = [];
+      box.classList.remove('go', 'pulse', 'read');
+      screen.classList.remove('on');
+      $('#tap-avatar').classList.add('hidden');
+      $('#tap-screen-text').textContent = 'Prêt à lire une carte NFC';
+      $('#tap-text').textContent = 'Approchez la carte du téléphone…';
+      void box.offsetWidth;
+      const later = (fn, ms) => timers.push(setTimeout(fn, ms));
+      later(() => box.classList.add('go'), 200);
+      later(() => box.classList.add('pulse'), 1600);
+      later(() => {
+        box.classList.add('read');
+        screen.classList.add('on');
+        $('#tap-avatar').classList.remove('hidden');
+        $('#tap-screen-text').textContent = 'Ouverture du profil…';
+        $('#tap-text').textContent = '✓ Carte détectée';
+      }, 2500);
+      later(() => { location.href = 'demo.html'; }, 3500);
+    }
+    $('#btn-tap').addEventListener('click', runTap);
+  </script>
+</body>
+</html>

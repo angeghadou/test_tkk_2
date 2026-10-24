@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ma commande — TOKKA</title>
+  <meta name="theme-color" content="#111111">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokka.css">
+</head>
+<body class="body-gray">
+
+  <header class="page-head">
+    <a class="back" href="index.html">&larr; Accueil</a>
+    <div class="logo">TOKKA</div>
+    <div style="min-width:5rem"></div>
+  </header>
+
+  <!-- Étapes -->
+  <ol class="flow-progress" aria-label="Progression">
+    <li class="fp-step active"><span class="fp-dot">1</span><span class="fp-label">Commande</span></li>
+    <li class="fp-line"></li>
+    <li class="fp-step"><span class="fp-dot">2</span><span class="fp-label">Réseaux</span></li>
+    <li class="fp-line"></li>
+    <li class="fp-step"><span class="fp-dot">3</span><span class="fp-label">Paiement</span></li>
+  </ol>
+
+  <main class="flow-main">
+    <h1 class="flow-title">Votre commande</h1>
+    <p class="flow-sub">Choisissez votre quantité et dites-nous où livrer votre carte.</p>
+
+    <form id="order-form" novalidate>
+
+      <!-- Commande + total en direct -->
+      <section class="panel">
+        <div class="panel-row"><h2>Carte TOKKA</h2><span class="muted" style="font-size:.9rem"><span data-fmt="PRICE"></span> / carte</span></div>
+        <span class="tag-green">Livraison offerte à Abidjan</span>
+
+        <label class="option-row">
+          <input type="checkbox" class="check" id="qr-toggle">
+          <div><b>Ajouter un QR code au dos</b><small>+<span data-fmt="QR_PRICE"></span> par carte</small></div>
+        </label>
+
+        <div class="order-line" style="margin-top:.75rem">
+          <span style="font-weight:600">Quantité</span>
+          <div class="stepper">
+            <button type="button" data-qty="-1" aria-label="Diminuer">−</button>
+            <span data-qty-value>1</span>
+            <button type="button" data-qty="1" aria-label="Augmenter">+</button>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="order-line"><span class="muted">Cartes TOKKA × <span data-qty-value>1</span></span><strong data-sim="cards"></strong></div>
+        <div class="order-line hidden" id="line-qr"><span class="muted">QR code au dos</span><strong data-sim="qr"></strong></div>
+        <div class="order-line"><span class="muted">Livraison</span><strong style="color:var(--green)">Offerte</strong></div>
+
+        <div class="live-total">
+          <small>Total de la commande</small>
+          <b data-sim="total"></b>
+          <p>Acompte aujourd'hui : <strong data-sim="deposit"></strong><br>Reste à la livraison : <strong data-sim="remaining"></strong></p>
+        </div>
+      </section>
+
+      <!-- Coordonnées -->
+      <section class="panel">
+        <h2>Vos coordonnées</h2>
+        <p class="panel-hint">Ces informations apparaîtront sur votre carte.</p>
+        <div class="stack">
+          <div class="form-grid two">
+            <div class="field"><label for="firstName">Prénom</label><input id="firstName" class="input" type="text" autocomplete="given-name" placeholder="Ex: Yann-Christ"><p class="field-error" data-err="firstName"></p></div>
+            <div class="field"><label for="lastName">Nom</label><input id="lastName" class="input" type="text" autocomplete="family-name" placeholder="Ex: Amegah"><p class="field-error" data-err="lastName"></p></div>
+          </div>
+          <div class="field"><label for="phone">Téléphone (WhatsApp de préférence)</label><input id="phone" class="input" type="tel" inputmode="tel" autocomplete="tel" placeholder="Ex: 01 02 03 04 05"><p class="field-error" data-err="phone"></p></div>
+          <div class="field"><label for="email">E-mail <span class="gray" style="font-weight:400">(optionnel)</span></label><input id="email" class="input" type="email" autocomplete="email" placeholder="vous@exemple.com"><p class="field-error" data-err="email"></p></div>
+          <div class="form-grid two">
+            <div class="field"><label for="title">Poste <span class="gray" style="font-weight:400">(optionnel)</span></label><input id="title" class="input" type="text" placeholder="Ex: CEO"></div>
+            <div class="field"><label for="company">Entreprise <span class="gray" style="font-weight:400">(optionnel)</span></label><input id="company" class="input" type="text" placeholder="Ex: TOKKA"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Livraison -->
+      <section class="panel">
+        <h2>Livraison</h2>
+        <p class="panel-hint">Gratuite à Abidjan. Vous réglez le solde à la réception.</p>
+        <div class="stack">
+          <div class="field"><label for="commune">Commune</label>
+            <select id="commune" class="input">
+              <option value="">Choisir…</option>
+              <option>Cocody</option><option>Plateau</option><option>Marcory</option><option>Treichville</option>
+              <option>Yopougon</option><option>Abobo</option><option>Adjamé</option><option>Koumassi</option>
+              <option>Port-Bouët</option><option>Bingerville</option><option>Autre (Abidjan)</option>
+            </select>
+            <p class="field-error" data-err="commune"></p>
+          </div>
+          <div class="field"><label for="address">Quartier / repère</label><input id="address" class="input" type="text" autocomplete="street-address" placeholder="Ex: Riviera 2, près de la pharmacie"><p class="field-error" data-err="address"></p></div>
+          <label class="terms"><input type="checkbox" class="check" id="terms"><span>J'accepte les <a href="#">conditions de vente</a> et je comprends que l'acompte confirme ma réservation.</span></label>
+          <p class="field-error" data-err="terms"></p>
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <!-- Barre fixe : acompte + bouton -->
+  <div class="sticky-bar">
+    <div class="sticky-in">
+      <div class="sticky-total"><small>Acompte</small><b data-sim="deposit"></b></div>
+      <button type="submit" form="order-form" class="btn btn-dark btn-square">Continuer &rarr;</button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       CONFIGURATION (mêmes valeurs que dans index.html)
+       ========================================================= */
+    const CONFIG = {
+      PRICE:5500,
+      DEPOSIT: 2500,
+      QR_PRICE: 1000
+    };
+
+    /* =========================================================
+       UTILITAIRES
+       ========================================================= */
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const fmt = n => Math.round(n).toLocaleString('fr-FR').replace(/[\u202f\u00a0]/g, ' ');
+    const money = n => `${fmt(n)} FCFA`;
+    const store = {
+      get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    };
+    const KEY = 'tokka_order';
+    function toast(msg) {
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function setError(input, msg) {
+      const out = $(`[data-err="${input.id}"]`);
+      input.classList.toggle('error', !!msg);
+      if (out) out.textContent = msg || '';
+    }
+    // Téléphone ivoirien : 10 chiffres, avec ou sans +225 / 00225
+    function normalizePhoneCI(raw) {
+      const d = String(raw).replace(/[^\d+]/g, '').replace(/^\+?225/, '').replace(/^00225/, '').replace(/\D/g, '');
+      return /^\d{10}$/.test(d) ? d : null;
+    }
+
+    $$('[data-fmt]').forEach(el => el.textContent = money(CONFIG[el.dataset.fmt]));
+
+    /* =========================================================
+       COMMANDE : quantité, QR et total en direct
+       ========================================================= */
+    const saved = store.get(KEY) || {};
+    const order = { qty: Math.min(20, Math.max(1, +saved.qty || 1)), qr: !!saved.qr };
+
+    function totals() {
+      const cards = CONFIG.PRICE * order.qty;
+      const qr = order.qr ? CONFIG.QR_PRICE * order.qty : 0;
+      const total = cards + qr;
+      const deposit = CONFIG.DEPOSIT * order.qty + qr;
+      return { cards, qr, total, deposit, remaining: Math.max(total - deposit, 0) };
+    }
+    function update() {
+      const t = totals();
+      $$('[data-qty-value]').forEach(e => e.textContent = order.qty);
+      $('#qr-toggle').checked = order.qr;
+      $('#line-qr').classList.toggle('hidden', !order.qr);
+      $$('[data-sim]').forEach(e => {
+        const txt = money(t[e.dataset.sim]);
+        if (e.textContent !== txt) {
+          e.textContent = txt;
+          e.classList.remove('bump'); void e.offsetWidth; e.classList.add('bump');
+        }
+      });
+    }
+    $$('[data-qty]').forEach(b => b.addEventListener('click', () => {
+      order.qty = Math.min(20, Math.max(1, order.qty + +b.dataset.qty));
+      update();
+    }));
+    $('#qr-toggle').addEventListener('change', e => { order.qr = e.target.checked; update(); });
+
+    /* =========================================================
+       FORMULAIRE
+       ========================================================= */
+    const FIELDS = ['firstName', 'lastName', 'phone', 'email', 'title', 'company', 'commune', 'address'];
+    FIELDS.forEach(id => { if (saved[id]) $('#' + id).value = saved[id]; });
+    if (saved.firstName) $('#terms').checked = true;      // l'utilisateur revient en arrière : déjà accepté
+
+    $('#order-form').addEventListener('input', e => { if (e.target.id) setError(e.target, ''); });
+
+    function validate() {
+      let ok = true;
+      const rules = [
+        ['firstName', $('#firstName').value.trim().length >= 2, 'Entrez votre prénom.'],
+        ['lastName', $('#lastName').value.trim().length >= 2, 'Entrez votre nom.'],
+        ['phone', !!normalizePhoneCI($('#phone').value), 'Numéro invalide (10 chiffres attendus).'],
+        ['email', !$('#email').value.trim() || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test($('#email').value.trim()), 'Adresse e-mail invalide.'],
+        ['commune', !!$('#commune').value, 'Choisissez votre commune.'],
+        ['address', $('#address').value.trim().length >= 3, 'Indiquez un quartier ou un repère.']
+      ];
+      rules.forEach(([id, valid, msg]) => { setError($('#' + id), valid ? '' : msg); if (!valid) ok = false; });
+      const terms = $('#terms');
+      $('[data-err="terms"]').textContent = terms.checked ? '' : 'Veuillez accepter les conditions.';
+      if (!terms.checked) ok = false;
+      if (!ok) {
+        const first = $('.input.error');
+        if (first) { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); first.focus({ preventScroll: true }); }
+        else $('#terms').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return ok;
+    }
+
+    $('#order-form').addEventListener('submit', e => {
+      e.preventDefault();
+      if (!validate()) { toast('Vérifiez les champs en rouge.'); return; }
+      const data = {};
+      FIELDS.forEach(id => data[id] = $('#' + id).value.trim());
+      data.phone = normalizePhoneCI(data.phone);
+      const t = totals();
+      store.set(KEY, {
+        ...saved, ...data,
+        qty: order.qty, qr: order.qr,                       // qr = booléen (option choisie)
+        cards: t.cards, qrAmount: t.qr, total: t.total, deposit: t.deposit, remaining: t.remaining,
+        links: saved.links || [], status: 'draft'
+      });
+      location.href = 'reseaux.html';
+    });
+
+    update();
+  </script>
+</body>
+</html>

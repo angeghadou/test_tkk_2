@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exemple de carte — TOKKA</title>
+  <meta name="theme-color" content="#ffffff">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokka.css">
+</head>
+<body>
+
+  <!-- Page purement décorative : exemple de ce que voient vos contacts après un tap -->
+  <div class="dcard">
+    <span class="demo-badge">Exemple de carte : les liens ci-dessous sont décoratifs</span>
+
+    <div class="dcard-in">
+      <div class="dcard-top">
+        <div class="dcard-photo">YA</div>
+        <div class="dcard-brand">
+          <p>Carte digitale</p>
+          <h1>TOKKA</h1>
+        </div>
+      </div>
+
+      <div class="dcard-info">
+        <h2>AMEGAH Yann-Christ</h2>
+        <p class="job">CEO TOKKA</p>
+        <p class="company">TOKKA</p>
+      </div>
+
+      <div class="dcard-links">
+        <a class="pill-link" href="#" data-decor>Appeler</a>
+        <a class="pill-link" href="#" data-decor>WhatsApp</a>
+        <a class="pill-link" href="#" data-decor>Instagram</a>
+        <a class="pill-link" href="#" data-decor>Snapchat</a>
+        <a class="pill-link" href="#" data-decor>Site web</a>
+      </div>
+    </div>
+
+    <div class="dcard-actions">
+      <a class="btn btn-outline-dark" href="index.html">&larr; Accueil</a>
+      <a class="btn btn-dark" href="commande.html">Obtenir ma carte</a>
+    </div>
+  </div>
+
+
+
+  <script>
+    const toastEl = document.getElementById('toast');
+    document.querySelectorAll('[data-decor]').forEach(a => a.addEventListener('click', e => {
+      e.preventDefault();
+      toastEl.textContent = "C'est un exemple : commandez votre carte pour avoir la vôtre.";
+      toastEl.classList.add('show');
+      clearTimeout(window._t);
+      window._t = setTimeout(() => toastEl.classList.remove('show'), 2800);
+    }));
+  </script>
+</body>
+</html>

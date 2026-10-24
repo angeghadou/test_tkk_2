@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mes réseaux — TOKKA</title>
+  <meta name="theme-color" content="#111111">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="tokka.css">
+</head>
+<body class="body-gray">
+
+  <header class="page-head">
+    <a class="back" href="commande.html">&larr; Retour</a>
+    <div class="logo">TOKKA</div>
+    <div style="min-width:5rem"></div>
+  </header>
+
+  <!-- Étapes -->
+  <ol class="flow-progress" aria-label="Progression">
+    <li class="fp-step done"><span class="fp-dot">✓</span><span class="fp-label">Commande</span></li>
+    <li class="fp-line done"></li>
+    <li class="fp-step active"><span class="fp-dot">2</span><span class="fp-label">Réseaux</span></li>
+    <li class="fp-line"></li>
+    <li class="fp-step"><span class="fp-dot">3</span><span class="fp-label">Paiement</span></li>
+  </ol>
+
+  <main class="flow-main">
+    <h1 class="flow-title">Vos réseaux</h1>
+    <p class="flow-sub">Touchez les réseaux que vous voulez afficher sur votre carte. Vos contacts les ouvriront d'un seul tap.</p>
+
+    <!-- Aperçu en direct -->
+    <div class="pv-card" aria-live="polite">
+      <div class="pv-brand"><span>TOKKA</span><span>Aperçu</span></div>
+      <div class="pv-top">
+        <div class="pv-avatar" id="pv-initials"></div>
+        <div>
+          <div class="pv-name" id="pv-name"></div>
+          <div class="pv-job" id="pv-job"></div>
+        </div>
+      </div>
+      <div class="pv-pills" id="pv-pills"></div>
+    </div>
+
+    <!-- Choix des réseaux -->
+    <section class="panel">
+      <h2>Choisissez vos réseaux</h2>
+      <p class="panel-hint">Vous pourrez en ajouter ou en retirer plus tard depuis votre espace.</p>
+      <div class="net-grid" id="net-grid" ></div>
+    </section>
+
+    <!-- Saisie des liens -->
+    <section class="panel">
+      <h2>Vos liens</h2>
+      <p class="panel-hint">Renseignez votre pseudo, votre numéro ou le lien complet.</p>
+      <div class="net-fields" id="net-fields"></div>
+    </section>
+
+    <p class="center"><button type="button" class="text-link" id="btn-skip">Je les ajouterai plus tard</button></p>
+  </main>
+
+  <div class="sticky-bar">
+    <div class="sticky-in">
+      <div class="sticky-total"><small>Réseaux choisis</small><b id="count">0</b></div>
+      <button type="button" class="btn btn-dark btn-square" id="btn-next">Continuer vers le paiement &rarr;</button>
+    </div>
+  </div>
+
+  <script>
+    /* =========================================================
+       UTILITAIRES
+       ========================================================= */
+    const $  = (s, r = document) => r.querySelector(s);
+    const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const store = {
+      get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+    };
+    const KEY = 'tokka_order';
+    function toast(msg) {
+      const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+      clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+    function setError(input, msg) {
+      const out = input.parentElement.querySelector('.field-error');
+      input.classList.toggle('error', !!msg);
+      if (out) out.textContent = msg || '';
+    }
+    function normalizePhoneCI(raw) {
+      const d = String(raw).replace(/[^\d+]/g, '').replace(/^\+?225/, '').replace(/^00225/, '').replace(/\D/g, '');
+      return /^\d{10}$/.test(d) ? d : null;
+    }
+
+    /* =========================================================
+       RÉSEAUX DISPONIBLES
+       ========================================================= */
+    const NETWORKS = [
+      { id: 'whatsapp',  label: 'WhatsApp',  icon: 'fa-brands fa-whatsapp',   color: 'red', ph: 'Numéro (ex: 01 02 03 04 05)' },
+      { id: 'instagram', label: 'Instagram', icon: 'fa-brands fa-instagram',  color: '', ph: '@votrepseudo' },
+      { id: 'tiktok',    label: 'TikTok',    icon: 'fa-brands fa-tiktok',     color: '', ph: '@votrepseudo' },
+      { id: 'snapchat',  label: 'Snapchat',  icon: 'fa-brands fa-snapchat',   color: '', ph: 'votre pseudo' },
+      { id: 'linkedin',  label: 'LinkedIn',  icon: 'fa-brands fa-linkedin-in',color: '', ph: 'votre-profil ou lien' },
+      { id: 'facebook',  label: 'Facebook',  icon: 'fa-brands fa-facebook-f', color: '', ph: 'votre.page ou lien' },
+      { id: 'youtube',   label: 'YouTube',   icon: 'fa-brands fa-youtube',    color: '', ph: '@votrechaine' },
+      { id: 'x',         label: 'X',         icon: 'fa-brands fa-youtube',    color: '', ph: '@votrepseudo' },
+      { id: 'telegram',  label: 'Telegram',  icon: 'fa-brands fa-telegram',   color: '', ph: '@votrepseudo' },
+      { id: 'website',   label: 'Site web',  icon: 'fa-solid fa-globe',       color: '', ph: 'monsite.com' },
+      { id: 'portfolio', label: 'Portfolio', icon: 'fa-solid fa-briefcase',   color: '', ph: 'monportfolio.com' },
+      { id: 'email',     label: 'E-mail',    icon: 'fa-solid fa-envelope',    color: '', ph: 'vous@exemple.com' }
+    ];
+
+    const netById = id => NETWORKS.find(n => n.id === id);
+
+    function buildHref(id, raw) {
+      const v = raw.trim();
+      if (!v) return null;
+      if (id === 'email') {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) ? `mailto:${v}` : null;
+      }
+      if (/^https?:\/\//i.test(v)) return v;
+      const h = v.replace(/^@/, '');
+      const social = base => /^[\w.\-]+$/.test(h) ? base + h : null;
+      switch (id) {
+        case 'whatsapp':  { const n = normalizePhoneCI(v); return n ? `https://wa.me/225${n}` : null; }
+        case 'instagram': return social('https://instagram.com/');
+        case 'tiktok':    return social('https://tiktok.com/@');
+        case 'snapchat':  return social('https://snapchat.com/add/');
+        case 'linkedin':  return social('https://linkedin.com/in/');
+        case 'facebook':  return social('https://facebook.com/');
+        case 'youtube':   return social('https://youtube.com/@');
+        case 'x':         return social('https://x.com/');
+        case 'telegram':  return social('https://t.me/');
+        default:          return /^[\w-]+(\.[\w-]+)+(\/\S*)?$/.test(v) ? `https://${v}` : null;
+      }
+    }
+
+    /* =========================================================
+       ÉTAT
+       ========================================================= */
+    const order = store.get(KEY) || {};
+    if (!order.firstName) location.replace('commande.html');      
+    let links = (order.links || []).map(l => ({ id: l.id, raw: l.raw }));
+
+    /* =========================================================
+       RENDU
+       ========================================================= */
+    function renderGrid() {
+      $('#net-grid').innerHTML = NETWORKS.map(n => `
+        <button type="button" class="net-tile ${links.some(l => l.id === n.id) ? 'selected' : ''}" data-id="${n.id}" aria-pressed="${links.some(l => l.id === n.id)}">
+          <span class="net-check">✓</span>
+          <span class="net-icon" style="background:white"><i class="${n.icon}"></i></span>
+          <span>${n.label}</span>
+        </button>`).join('');
+    }
+    
+    function renderFields() {
+      const box = $('#net-fields');
+      if (!links.length) {
+        box.innerHTML = '<div class="net-empty">Aucun réseau sélectionné pour le moment.<br>Touchez un réseau ci-dessus pour l\'ajouter.</div>';
+        return;
+      }
+      box.innerHTML = '';
+      links.forEach(l => {
+        const n = netById(l.id);
+        const row = document.createElement('div');
+        row.className = 'net-field';
+        row.dataset.id = l.id;
+        row.innerHTML = `
+          <div class="net-field-head">
+            <span class="net-icon" style="background:${n.color}"><i class="${n.icon}"></i></span>${n.label}
+            <button type="button" class="net-remove" aria-label="Retirer ${n.label}">✕</button>
+          </div>
+          <input class="input white" type="${l.id === 'email' ? 'email' : 'text'}" value="${esc(l.raw)}" placeholder="${esc(n.ph)}" aria-label="${n.label}">
+          <p class="field-error"></p>`;
+        $('.net-remove', row).addEventListener('click', () => toggle(l.id));
+        const input = $('input', row);
+        input.addEventListener('input', () => { l.raw = input.value; setError(input, ''); renderPreview(); });
+        box.appendChild(row);
+      });
+    }
+
+    function renderPreview() {
+      const first = (order.firstName || '').trim(), last = (order.lastName || '').trim();
+      $('#pv-initials').textContent = ((first[0] || '') + (last[0] || '')).toUpperCase();
+      $('#pv-name').textContent = `${last.toUpperCase()} ${first}`;
+      $('#pv-job').textContent = [order.title, order.company].filter(Boolean).join(' · ');
+      const pills = ['Appeler', ...links.map(l => netById(l.id).label)];
+      $('#pv-pills').innerHTML = pills.map(p => `<span class="pv-pill">${esc(p)}</span>`).join('');
+      $('#count').textContent = links.length;
+    }
+
+    function toggle(id) {
+      const i = links.findIndex(l => l.id === id);
+      if (i >= 0) links.splice(i, 1);
+      else links.push({ id, raw: '' });
+      renderGrid(); renderFields(); renderPreview();
+      if (i < 0) {
+        const input = $(`.net-field[data-id="${id}"] input`);
+        if (input) input.focus({ preventScroll: true });
+      }
+    }
+    $('#net-grid').addEventListener('click', e => {
+      const tile = e.target.closest('.net-tile');
+      if (tile) toggle(tile.dataset.id);
+    });
+
+    /* =========================================================
+       CONTINUER
+       ========================================================= */
+    function saveAndGo(list) {
+      store.set(KEY, { ...order, links: list, linksDone: true });
+      location.href = 'paiement.html';
+    }
+    $('#btn-next').addEventListener('click', () => {
+      if (!links.length) { toast('Choisissez au moins un réseau, ou passez cette étape.'); return; }
+      let ok = true;
+      const result = [];
+      $$('.net-field').forEach(row => {
+        const id = row.dataset.id, l = links.find(x => x.id === id), input = $('input', row);
+        const href = buildHref(id, l.raw);
+        if (!href) {
+          ok = false;
+          setError(input, l.raw.trim() ? 'Lien ou identifiant invalide.' : 'Renseignez ce réseau ou retirez-le.');
+        } else {
+          result.push({ id, type: netById(id).label, raw: l.raw.trim(), href });
+        }
+      });
+      if (!ok) {
+        const bad = $('.net-field .input.error');
+        if (bad) bad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        toast('Corrigez les champs en rouge.');
+        return;
+      }
+      saveAndGo(result);
+    });
+    $('#btn-skip').addEventListener('click', () => saveAndGo([]));
+
+    renderGrid(); renderFields(); renderPreview();
+  </script>
+</body>
+</html>
